@@ -87,6 +87,63 @@ leaflet(oil_sf) %>%
 
 ```
 
+## Make a tmap plot with the Texas state shapefile
+
+```{r}
+
+states <- st_read(dsn = ".", layer = "states")
+
+tex_border <- states %>% 
+  filter(STATE_NAME == "Texas") %>% 
+  st_transform(4326)
+
+#now we have data that matches the coordinate system of the oil spill data we have
+
+plot(tex_border)
+
+#there are 5 non geometry columns so it shows 5 texases 
+
+tm_shape(tex_border) +
+  tm_polygons() +
+  tm_shape(oil_sf) +
+  tm_dots(size = 0.3)
+
+#are these random locations? This question doesnt really make sense for this data set because obviously there are more oil spills where there are more oil pipelines but for the sake of connecting lecture material...
+
+```
+
+###Convert the data to spatial points patterns (combination of point data and the bounding window)
+
+```{r}
+
+#Now were gonna convert from simple features back to spatial data frame data. The second line is telling R this is spatial data that we want to use spatial point pattern analysis on
+
+spill_sp <- as(oil_sf, "Spatial")
+
+spill_ppp <- as(spill_sp, "ppp")
+
+tx_sp <- as(tex_border, "Spatial")
+
+tx_owin <- as(tx_sp, "owin")
+
+all_ppp <- ppp(spill_ppp$x, spill_ppp$y, window = tx_owin)
+
+#It rejected 4 points that were not within the polygon window. There were a few points or "events" that were outside the borders of Texas
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
