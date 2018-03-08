@@ -1,0 +1,65 @@
+---
+title: "Lab 8 ESM 244"
+author: "Kristen Peach"
+date: "3/7/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+###Load Packages
+
+```{r load_packages}
+
+
+library(ggplot2) 
+library(readr) 
+library(dplyr)
+library(sf)
+library(tmap)
+library(leaflet)
+library(spatstat)
+library(maptools)
+library(corrplot)
+
+
+```
+
+###Column graph of Texas oil spills
+
+```{r}
+
+
+oil_spills <- read_csv("oil_spills.csv")
+
+df <- oil_spills %>% 
+  filter(`Accident State` == "TX" & `Accident Year` < 2017) %>% 
+  group_by(`Accident Year`) %>% 
+  summarise(Loss = sum(`Net Loss (Barrels)`))
+
+ #if you ever fail to change the column headings to R friendly names you just have to add these '' to surround column headings (under squiggly tilde on keyboard, uppermost left key)
+
+# we want to calculate the net loss of oil in Texas by year so we need to group by year
+
+# now the df data frame is a super simplified data set with just the year and the net loss of oil from that year
+
+colnames(df) <- c("Year", "Loss")
+
+#renamed column headings for simplified data set 
+
+ggplot(df, aes(x= Year, y= Loss)) +
+  geom_col()
+
+#create a column graph of this simple data set 
+
+```
+
+**When I see things in the Git window on the right it means I have changed things in the project locally that I have NOT pushed to Github yet. Right now these changes only exist locally**
+
+
+
+
+
+
