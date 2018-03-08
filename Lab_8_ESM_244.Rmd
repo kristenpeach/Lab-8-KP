@@ -59,6 +59,33 @@ ggplot(df, aes(x= Year, y= Loss)) +
 **When I see things in the Git window on the right it means I have changed things in the project locally that I have NOT pushed to Github yet. Right now these changes only exist locally**
 
 
+### Leaflet plot of spill locations in TX in 2016
+
+```{r}
+
+df_loc <- oil_spills %>% 
+  filter(`Accident State` == "TX" & `Accident Year` == 2016) %>% 
+  select(Latitude, Longitude, `Net Loss (Barrels)`)
+
+#making new data frame for Texas oil spills in 2016
+
+colnames(df_loc) <- c("latitude", "longitude", "net_loss")
+
+#changing the column names to R friendly names
+
+# Now we have to tell it that this is spatial information
+
+oil_sf <- st_as_sf(df_loc, coords = c("longitude", "latitude"), crs = 4326)
+
+#remember longitude always has to be before latitude or you will get a flipped graph. Now if you look at the class of oil_sf is sf
+
+#class(oil_sf)
+
+leaflet(oil_sf) %>% 
+  addTiles() %>% 
+  addMarkers()
+
+```
 
 
 
