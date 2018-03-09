@@ -132,8 +132,73 @@ all_ppp <- ppp(spill_ppp$x, spill_ppp$y, window = tx_owin)
 
 ```
 
+### A density plot:
+
+```{r}
+
+plot(density(all_ppp, sigma = 0.4))
+
+#this creates a density plot of the location of the oil spills
 
 
+
+```
+
+###Quadrat test for spatial evenness
+
+```{r}
+
+#?quadrat.test
+
+oil_qt <- quadrat.test(all_ppp, nx = 5, ny = 5)
+
+#this takes the whole state of texas and breaks it into 5 regions in each direction. Count the number of events in each quadrat, gets the frequency of events for each quadrat
+
+oil_qt
+
+#we see a very very small p value. The null hypothesis is complete spatial randomness. We would reject the null hypothesis. We would retain the alternative that the data is not evenly spatially distributed.  If you look at the points on the map of Texas the points don't appear to be spatially random (confirms test). 
+
+plot(all_ppp)
+plot(oil_qt, add = TRUE, cex = 0.5)
+
+#for partial quadrats it figures out what the frequency of events "should" be if spatial evenness was true. Complete quadrats the expected frequency (if data was evenly distributed) is 14.5.
+
+```
+
+###G-Function for Nearest Neighbor Analysis
+
+```{r}
+
+lag <- seq(0,1, by = 0.01)
+
+oil_gfun <- envelope(all_ppp, fun = Gest, r = lag, nsim = 100)
+
+#oil_gfun
+
+ggplot(oil_gfun, aes(x= lag, y = obs)) +
+  geom_line(color = "black") +
+  geom_line(aes(x= lag, y = theo), color = "red")
+
+
+```
+
+###Nearest neighbor using the L-function (Ripley's K, standardized)
+
+```{r}
+
+r2 <- seq(0,3, by = 0.5)
+
+oil_lfun <- envelope(all_ppp, fun = Lest, r = r2, nsim = 20, global = TRUE)
+
+ggplot(oil_lfun, aes(x= r2, y = obs)) +
+  geom_line(color = "black") +
+  geom_line(aes(x = r2, y = theo), color = "blue")
+
+#Takeway message is the same. There are still more close neighbors in this spatial data than we would expect if total spatial randomness (really evenness) was true 
+
+
+
+```
 
 
 
